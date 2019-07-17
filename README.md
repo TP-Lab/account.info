@@ -1,77 +1,48 @@
+## Functions
 
-# metadata编译部署
-
-## 依赖环境
-
-1. eosio.cdt --- branch: release/1.5.x 或以上
-2. eosio.contract --- tag:  v1.5.2 或以上
-
-## 编译
-
-#### 1. 将metadata目录放入eosio.contracts内。
-#### 2. 编辑文件 eosio.contracts/CMakeLists.txt:
-
-```
-add_subdirectory(metadata)
-```
-#### 3. 运行eosio.contracts/build.sh完成编译
- ```
- ./build.sh
- ```
- 
- ## 部署
- 
- ```
- cd build
- cleos set contract metadatatptp ./tpaccount -p metadatatptp
- ```
-
-# metadata 测试
-
-## 测试环境
-
-jungle测试网 合约 metadatatptp
-节点：https://jungle2.cryptolions.io
-
-## 功能测试
-
-### 1.转账更新信息：
+### 1.transfer and update the account information：
 
 ```
 transfer(name from, name to, asset quantity, string memo)
 update(name account_name,string title,string avatar,string desc,name modifier,string url)
 ```
 
-#### 第一次更新信息：
+#### set the account information firstly：
+
+The token should be 0.1000 EOS at first time
 
 ```
 cleos push action eosio.token transfer '["huoyantest11","metadatatptp","0.1000 EOS","huoyantest12"]' -p huoyantest11
 cleos push action metadatatptp update '["huoyantest12","火焰神","http://www.huoyan.jpg","这是火焰之家","huoyantest11","\"web\":\"123\""]' -p huoyantest11
 ```
 
-#### 第二次更新信息：
+#### update the account information after fist time：
+
+The token should be 1.5 times of last's
 
 ```
 cleos push action eosio.token transfer '["huoyantest13","metadatatptp","0.1500 EOS","huoyantest12"]' -p huoyantest13
 cleos push action metadatatptp update '["huoyantest12","火焰神13","http://www.huoyan.jpg","这是火焰之家13","huoyantest13","\"web\":\"13\""]' -p huoyantest13
 ```
 
-#### 账号本人更新信息：
+#### the account update information of itself at first time：
 
+The token should be 0.5 times of last's
 ```
 cleos push action eosio.token transfer '["huoyantest12","metadatatptp","0.0750 EOS","huoyantest12"]' -p huoyantest12
 cleos push action metadatatptp update '["huoyantest12","火焰神本人","http://www.huoyan.jpg","这是火焰之家本人","huoyantest12","\"web\":\"本人\""]' -p huoyantest12
 ```
 
-#### 账号本人二次更新信息：
+#### the account update information of itself after first time：
 
+Just update and don't need to pay again.
 ```
 cleos push action metadatatptp update '["huoyantest12","火焰神本人2","http://www.huoyan.jpg","这是火焰之家本人2","huoyantest12","\"web\":\"本人2\""]' -p huoyantest12
 ```
 
-### 2. 审查
+### 2. Verification
 
-#### 增加审查人
+#### add verifier
 
 ```
 cleos push action metadatatptp addverifier '["chendatony44"]' -p metadatatptp
@@ -80,21 +51,21 @@ cleos push action metadatatptp addverifier '["metadatatptp"]' -p metadatatptp
 ```
 
 
-#### 申请审查
+#### apply for verfication
 
 ```
 applyverify(name account_name,string memo)
 cleos push action metadatatptp applyverify '["huoyantest12","请确认身份"]' -p huoyantest12
 ```
 
-#### 审查
+#### verify
 
 ```
 verify(name account_name)
 cleos push action metadatatptp verify '["huoyantest12","metadatatptp"]' -p metadatatptp
 ```
 
-#### 黑名单
+#### add or delete black list
 
 ```
 增加黑名单
@@ -105,9 +76,9 @@ delblack(name account_name,name verifier)
 cleos push action metadatatptp delblack '["huoyantest12""metadatatptp"]' -p metadatatptp
 ```
 
-### 3.查询
+### 3.Inquiry
 
-#### 查询审查人
+#### Inquire verifier
 
 ```
 cleos get table metadatatptp metadatatptp verifiers
@@ -115,7 +86,7 @@ cleos get table metadatatptp metadatatptp verifiers
 ```
 
 
-#### 查询账号信息
+#### Inquire account information
 
 ```
  struct [[eosio::table]] accounts {
@@ -141,7 +112,7 @@ cleos get table metadatatptp metadatatptp accounts
 
 ```
 
-#### 查询审查申请
+#### Inquire verification application
 
 ```
 struct [[eosio::table]] investigate {
@@ -159,7 +130,7 @@ cleos get table metadatatptp metadatatptp investigate
 
 ```
 
-#### 查询黑名单
+#### Inquire black list
 
 ```
 struct [[eosio::table]] black {
@@ -171,9 +142,9 @@ struct [[eosio::table]] black {
 cleos get table metadatatptp metadatatptp black
 ```
 
-## eosjs调用
+## eosjs
 
-### 用户账号信息表字段规范
+### account information
 
 accounts
 
@@ -192,7 +163,7 @@ accounts
 ```
 
 
-### 更新个人信息
+### update account information
 
 ``` javascript
 
