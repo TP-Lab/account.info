@@ -11,7 +11,7 @@ update(name account_name,string title,string avatar,string desc,name modifier,st
 
 The token should be 0.1000 EOS at first time
 
-(contract account on junle net is  'metadatatptp')
+contract account on junle net is  'metadatatptp'
 
 ```
 cleos push action eosio.token transfer '["huoyantest11","metadatatptp","0.1000 EOS","huoyantest12"]' -p huoyantest11
