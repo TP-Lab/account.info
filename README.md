@@ -97,7 +97,7 @@ cleos get table metadatatptp metadatatptp verifiers
             string avatar;
             string desc;
             name modifier;
-            uint64_t status; //0:初值 1:已支付; 2:已修改; 3:account_name本人已经修改
+            uint64_t status; //0:inital value 1:paid; 2:modified; 3:modified by the account self
             uint64_t verified;
             string url;
             asset price;
@@ -126,7 +126,7 @@ struct [[eosio::table]] investigate {
             EOSLIB_SERIALIZE(investigate, (account_name)(memo)(propose_time))
         };
         typedef eosio::multi_index<"investigate"_n, investigate,
-                        indexed_by<"time"_n,const_mem_fun<investigate,uint64_t,&investigate::get_propose_time>>> investigate_table; //发起申请时间索引
+                        indexed_by<"time"_n,const_mem_fun<investigate,uint64_t,&investigate::get_propose_time>>> investigate_table; //apply time index
 
 cleos get table metadatatptp metadatatptp investigate
 
@@ -186,10 +186,10 @@ let actions = [{
        "permission": 'active'
    }],
    "data": {
-       "from": 'youraccount', // 当前账号
-       "memo": 'itokenpocket', // 需要编辑的账号
-       "quantity": '0.1000 EOS', // 初始价格为0.1，没增加一次
-       "to": CONTRACT_NAME  // 合约账号
+       "from": 'youraccount', // the current account,which is used to update other account's information
+       "memo": 'itokenpocket', // the account whose information will be update
+       "quantity": '0.1000 EOS', // initial price is 0.1EOS, the price will be 1.5 times on each update
+       "to": CONTRACT_NAME  // the contract account
    }
 }, {
    "account": CONTRACT_NAME,
@@ -199,11 +199,11 @@ let actions = [{
        "permission": 'active'
    }],
    "data": {
-       "account_name": 'itokenpocket', // 需要编辑的账号
-       "avatar": 'https://a.com/a.jpg', // 头像图片地址
+       "account_name": 'itokenpocket', // the account whose information will be update
+       "avatar": 'https://a.com/a.jpg', // avtar url
        "desc": '介绍信息', 
        "modifier": 'youraccount',
-       "title": 'TokenPocket官方账号',  // 名字昵称
+       "title": 'TokenPocket官方账号',  // name
        "url": JSON.stringify(url)
    }
 }]
