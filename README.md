@@ -9,7 +9,7 @@ update(name account_name,string title,string avatar,string desc,name modifier,st
 
 #### set the account information firstly：
 
-The token should be 0.1000 EOS at first time
+The price should be 0.1000 EOS at first time
 
 contract account on junle net is  'metadatatptp'
 
@@ -20,7 +20,7 @@ cleos push action metadatatptp update '["huoyantest12","火焰神","http://www.h
 
 #### update the account information after fist time：
 
-The token should be 1.5 times of last's
+The price should be 1.5 times of last's
 
 ```
 cleos push action eosio.token transfer '["huoyantest13","metadatatptp","0.1500 EOS","huoyantest12"]' -p huoyantest13
@@ -29,7 +29,7 @@ cleos push action metadatatptp update '["huoyantest12","火焰神13","http://www
 
 #### the account update information of itself at first time：
 
-The token should be 0.5 times of last's
+The price should be 0.5 times of last's
 ```
 cleos push action eosio.token transfer '["huoyantest12","metadatatptp","0.0750 EOS","huoyantest12"]' -p huoyantest12
 cleos push action metadatatptp update '["huoyantest12","火焰神本人","http://www.huoyan.jpg","这是火焰之家本人","huoyantest12","\"web\":\"本人\""]' -p huoyantest12
