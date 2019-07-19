@@ -144,23 +144,23 @@ struct [[eosio::table]] black {
 cleos get table metadatatptp metadatatptp black
 ```
 
-## eosjs
+## How to user with eosjs
 
 ### account information
 
-eos.getTableRows(true, 'account.info', 'account.info', 'accounts','','eossanguoone', 'eossanguoone', 1).then(console.log)
+eos.getTableRows(true, 'account.info', 'account.info', 'accounts','','chendachenda', 'chendachenda', 1).then(console.log)
 
 ``` javascript
 {
- account_name: "chendatony44",
- avatar: "https://tp-statics.tokenpocket.pro/website-token/1562040672940-tp-lab.png",
- desc: "小明的账号1",
- modifier: "chendatony44",
- price: "0.1000 EOS",
- status: 3,
- title: "小明",
+ account_name: "chendachenda",
+ avatar: "https://statics.tokenpocket.pro/avatar/1562320470-chendachenda.jpg",
+ desc: "陈达的主网账号", 
+ modifier: "chendachenda", 
+ price: "0.1000 EOS",  //  last modified price
+ status: 3,   // 0:inital value 1:paid; 2:modified; 3:modified by the account self
+ title: "陈达", // nickname
  url: '{"website":"https://www.baidu.com","telegram":"tokenPocket_en","twitter":"TokenPocket_en","wechat":"TP-robot"}',
- verified: 0
+ verified: 0 // a reserved flag for future feature
 }
 ```
 
@@ -203,7 +203,7 @@ let actions = [{
        "avatar": 'https://a.com/a.jpg', // avtar url
        "desc": '介绍信息', 
        "modifier": 'youraccount',
-       "title": 'TokenPocket官方账号',  // name
+       "title": 'TokenPocket官方账号',  // nickname
        "url": JSON.stringify(url)
    }
 }]
