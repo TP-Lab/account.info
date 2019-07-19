@@ -148,7 +148,7 @@ cleos get table metadatatptp metadatatptp black
 
 ### account information
 
-accounts
+eos.getTableRows(true, 'account.info', 'account.info', 'accounts','','eossanguoone', 'eossanguoone', 1).then(console.log)
 
 ``` javascript
 {
