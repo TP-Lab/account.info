@@ -1,3 +1,13 @@
+# Account.info
+
+## 简介 Introducation
+
+- https://docs.google.com/document/d/1JWBw7bwrfsk_RkfOOCVOe4vXSfKQGtW5Vm01SxBWJVc/edit
+
+
+- EOS Mainnet contract: `account.info`
+- EOS Jungle testnet contract: `metadatatptp`
+
 ## Functions
 
 ### 1.transfer and update the account information：
@@ -11,7 +21,7 @@ update(name account_name,string title,string avatar,string desc,name modifier,st
 
 The price should be 0.1000 EOS at first time
 
-contract account on junle net is  'metadatatptp'
+contract account on jungle net is  'metadatatptp'
 
 ```
 cleos push action eosio.token transfer '["huoyantest11","metadatatptp","0.1000 EOS","huoyantest12"]' -p huoyantest11
