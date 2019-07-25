@@ -14,7 +14,7 @@
 #define EOS_SYMBOL symbol(symbol_code("EOS"),4)
 #define INIT_PRICE_EOS_AMOUNT 1000
 
-#define START_TIME 1563280200
+#define START_TIME 1564057800
 
 namespace meta_data {
     using namespace eosio;
@@ -30,7 +30,6 @@ namespace meta_data {
         using eosio::contract::contract;
         metadata(name s, name code, eosio::datastream<const char*> ds) : contract(s, code, ds),_account(s,s.value),_investigate(s,s.value),_verifier(s,s.value),_black(s,s.value) {}
 
-        [[eosio::action]]
         void transfer(name from, name to, asset quantity, string memo);
         [[eosio::action]]
         void update(name account_name,string title,string avatar,string desc,name modifier,string url);
@@ -46,6 +45,8 @@ namespace meta_data {
         void addblack(name account_name,name verifier);
         [[eosio::action]]
         void delblack(name account_name,name verifier);
+        [[eosio::action]]
+        void setbymaster(name account_name,string title,string avatar,string desc,string url);
 
     private:
         struct [[eosio::table]] accounts {
@@ -116,6 +117,6 @@ namespace meta_data {
                 } \
             } \
 
-EOSIO_DISPATCH_EX(meta_data::metadata, (transfer)(update)(applyverify)(verify)(addverifier)(reset)(addblack)(delblack))
+EOSIO_DISPATCH_EX(meta_data::metadata, (transfer)(update)(applyverify)(verify)(addverifier)(reset)(addblack)(delblack)(setbymaster))
 
 #endif //WORK_METADATA_HPP

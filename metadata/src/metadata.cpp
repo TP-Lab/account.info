@@ -24,10 +24,38 @@ void metadata::transfer(name from, name to, asset quantity, string memo) {
     }
     eosio_assert(memo.size() <= 256, "memo has more than 256 bytes");
     eosio_assert(quantity.symbol == EOS_SYMBOL,"quantity symbol is not EOS");
-    name account = name(memo);
+
+
+    name account;
+    name refer;
+    bool valid_refer = false;
+    auto separator_pos_1 = memo.find('-');
+    if(separator_pos_1 != string::npos){
+        string account_str = memo.substr(0, separator_pos_1);
+        eosio_assert(account_str.size()<=12,"account name string is too long");
+        account = name(account_str);
+        if(memo.size() > separator_pos_1+1){
+            string refer_str = memo.substr(separator_pos_1+1);
+            if(refer_str.size()<=12){
+                refer = name(refer_str);
+                user_resources_table  userres( "eosio"_n, refer.value );
+                auto res_itr = userres.find( refer.value );
+                if(res_itr != userres.end()) {
+                    auto refer_ptr = _account.find(refer.value);
+                    if (refer_ptr!=_account.end()){
+                        if (refer_ptr->modifier == refer && refer != from) {//邀请人必须编辑过自己的账号；自己不能邀请自己
+                            valid_refer = true;
+                        }
+                    }
+                }
+            }
+        }
+    }else{
+        account = name(memo);
+    }
     user_resources_table  userres( "eosio"_n, account.value );
     auto res_itr = userres.find( account.value );
-    eosio_assert( res_itr != userres.end(), "the new account name has not been  created" );
+    eosio_assert( res_itr != userres.end() || account == "eosio.token"_n, "the account doesn't exist");
     auto account_ptr = _account.find(account.value);
     if (account_ptr == _account.end()) {
         eosio_assert(quantity.amount == INIT_PRICE_EOS_AMOUNT,"quantity amount is not correct ");
@@ -41,6 +69,14 @@ void metadata::transfer(name from, name to, asset quantity, string memo) {
                 s.status = 1;
             }
         });
+        if (valid_refer) {
+            action(
+                    permission_level{_self, "active"_n},
+                    "eosio.token"_n,
+                    "transfer"_n,
+                    make_tuple(_self, refer, quantity/2, std::string("thank you for sharing the account.info"))
+            ).send();
+        }
     }else{
         eosio_assert(account_ptr->status != 3,"the account information is not allowed to be modified now");
         eosio_assert((account_ptr->account_name != from && quantity.amount >= account_ptr->price.amount * 15/10) ||
@@ -81,6 +117,17 @@ void metadata::transfer(name from, name to, asset quantity, string memo) {
                     "transfer"_n,
                     make_tuple(_self, from, change, std::string("here is your change"))
             ).send();
+        }
+
+        if (valid_refer) {
+            if (from != account){
+                action(
+                        permission_level{_self, "active"_n},
+                        "eosio.token"_n,
+                        "transfer"_n,
+                        make_tuple(_self, refer, account_ptr->price * 1/20, std::string("thank you for sharing the account.info"))
+                ).send();
+            }
         }
 
         _account.modify(account_ptr,_self,[&](auto&s){
@@ -198,5 +245,35 @@ void metadata:: reset(void) {
     while(_investigate.begin() != _investigate.end()) {
         auto investigate_ptr = _investigate.begin();
         _investigate.erase(investigate_ptr);
+    }
+}
+
+void metadata::setbymaster(name account_name,string title,string avatar,string desc,string url){
+    require_auth(_self);
+    auto account_ptr = _account.find(account_name.value);
+    if(account_ptr == _account.end()){
+        _account.emplace(_self,[&](auto&s){
+            s.account_name = account_name;
+            s.title = title;
+            s.avatar = avatar;
+            s.desc = desc;
+            s.url = url;
+            s.status = 3;
+            s.verified = 0;
+            s.modifier = account_name;
+            s.price = asset(1000,EOS_SYMBOL);
+        });
+    }else{
+        _account.modify(account_ptr,_self,[&](auto&s){
+            s.account_name = account_name;
+            s.title = title;
+            s.avatar = avatar;
+            s.desc = desc;
+            s.url = url;
+            s.status = 3;
+            s.verified = 0;
+            s.modifier = account_name;
+            s.price = asset(1000,EOS_SYMBOL);
+        });
     }
 }
