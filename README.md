@@ -1,77 +1,60 @@
+# Account.info
 
-# metadata编译部署
+## 简介 Introducation
 
-## 依赖环境
+- https://docs.google.com/document/d/1JWBw7bwrfsk_RkfOOCVOe4vXSfKQGtW5Vm01SxBWJVc/edit
 
-1. eosio.cdt --- branch: release/1.5.x 或以上
-2. eosio.contract --- tag:  v1.5.2 或以上
 
-## 编译
+- EOS Mainnet contract: `account.info`
+- EOS Jungle testnet contract: `metadatatptp`
 
-#### 1. 将metadata目录放入eosio.contracts内。
-#### 2. 编辑文件 eosio.contracts/CMakeLists.txt:
+## Functions
 
-```
-add_subdirectory(metadata)
-```
-#### 3. 运行eosio.contracts/build.sh完成编译
- ```
- ./build.sh
- ```
- 
- ## 部署
- 
- ```
- cd build
- cleos set contract metadatatptp ./tpaccount -p metadatatptp
- ```
-
-# metadata 测试
-
-## 测试环境
-
-jungle测试网 合约 metadatatptp
-节点：https://jungle2.cryptolions.io
-
-## 功能测试
-
-### 1.转账更新信息：
+### 1.transfer and update the account information：
 
 ```
 transfer(name from, name to, asset quantity, string memo)
 update(name account_name,string title,string avatar,string desc,name modifier,string url)
 ```
 
-#### 第一次更新信息：
+#### set the account information firstly：
+
+The price should be 0.1000 EOS at first time
+
+contract account on jungle net is  'metadatatptp'
 
 ```
 cleos push action eosio.token transfer '["huoyantest11","metadatatptp","0.1000 EOS","huoyantest12"]' -p huoyantest11
 cleos push action metadatatptp update '["huoyantest12","火焰神","http://www.huoyan.jpg","这是火焰之家","huoyantest11","\"web\":\"123\""]' -p huoyantest11
 ```
 
-#### 第二次更新信息：
+#### update the account information after fist time：
+
+The price should be 1.5 times of last's
 
 ```
 cleos push action eosio.token transfer '["huoyantest13","metadatatptp","0.1500 EOS","huoyantest12"]' -p huoyantest13
 cleos push action metadatatptp update '["huoyantest12","火焰神13","http://www.huoyan.jpg","这是火焰之家13","huoyantest13","\"web\":\"13\""]' -p huoyantest13
 ```
 
-#### 账号本人更新信息：
+#### the account update information of itself at first time：
 
+The price should be 0.5 times of last's
 ```
 cleos push action eosio.token transfer '["huoyantest12","metadatatptp","0.0750 EOS","huoyantest12"]' -p huoyantest12
 cleos push action metadatatptp update '["huoyantest12","火焰神本人","http://www.huoyan.jpg","这是火焰之家本人","huoyantest12","\"web\":\"本人\""]' -p huoyantest12
 ```
 
-#### 账号本人二次更新信息：
+#### the account update information of itself after first time：
 
+Just update and don't need to pay again.
 ```
 cleos push action metadatatptp update '["huoyantest12","火焰神本人2","http://www.huoyan.jpg","这是火焰之家本人2","huoyantest12","\"web\":\"本人2\""]' -p huoyantest12
 ```
 
-### 2. 审查
+### 2. Verification
 
-#### 增加审查人
+#### add verifier
 
 ```
 cleos push action metadatatptp addverifier '["chendatony44"]' -p metadatatptp
@@ -80,21 +63,21 @@ cleos push action metadatatptp addverifier '["metadatatptp"]' -p metadatatptp
 ```
 
 
-#### 申请审查
+#### apply for verfication
 
 ```
 applyverify(name account_name,string memo)
 cleos push action metadatatptp applyverify '["huoyantest12","请确认身份"]' -p huoyantest12
 ```
 
-#### 审查
+#### verify
 
 ```
 verify(name account_name)
 cleos push action metadatatptp verify '["huoyantest12","metadatatptp"]' -p metadatatptp
 ```
 
-#### 黑名单
+#### add or delete black list
 
 ```
 增加黑名单
@@ -105,9 +88,9 @@ delblack(name account_name,name verifier)
 cleos push action metadatatptp delblack '["huoyantest12""metadatatptp"]' -p metadatatptp
 ```
 
-### 3.查询
+### 3.Inquiry
 
-#### 查询审查人
+#### Inquire verifier
 
 ```
 cleos get table metadatatptp metadatatptp verifiers
@@ -115,7 +98,7 @@ cleos get table metadatatptp metadatatptp verifiers
 ```
 
 
-#### 查询账号信息
+#### Inquire account information
 
 ```
  struct [[eosio::table]] accounts {
@@ -124,7 +107,7 @@ cleos get table metadatatptp metadatatptp verifiers
             string avatar;
             string desc;
             name modifier;
-            uint64_t status; //0:初值 1:已支付; 2:已修改; 3:account_name本人已经修改
+            uint64_t status; //0:inital value 1:paid; 2:modified; 3:modified by the account self
             uint64_t verified;
             string url;
             asset price;
@@ -141,7 +124,7 @@ cleos get table metadatatptp metadatatptp accounts
 
 ```
 
-#### 查询审查申请
+#### Inquire verification application
 
 ```
 struct [[eosio::table]] investigate {
@@ -153,13 +136,13 @@ struct [[eosio::table]] investigate {
             EOSLIB_SERIALIZE(investigate, (account_name)(memo)(propose_time))
         };
         typedef eosio::multi_index<"investigate"_n, investigate,
-                        indexed_by<"time"_n,const_mem_fun<investigate,uint64_t,&investigate::get_propose_time>>> investigate_table; //发起申请时间索引
+                        indexed_by<"time"_n,const_mem_fun<investigate,uint64_t,&investigate::get_propose_time>>> investigate_table; //apply time index
 
 cleos get table metadatatptp metadatatptp investigate
 
 ```
 
-#### 查询黑名单
+#### Inquire black list
 
 ```
 struct [[eosio::table]] black {
@@ -171,28 +154,28 @@ struct [[eosio::table]] black {
 cleos get table metadatatptp metadatatptp black
 ```
 
-## eosjs调用
+## How to user with eosjs
 
-### 用户账号信息表字段规范
+### account information
 
-accounts
+eos.getTableRows(true, 'account.info', 'account.info', 'accounts','','chendachenda', 'chendachenda', 1).then(console.log)
 
 ``` javascript
 {
- account_name: "chendatony44",
- avatar: "https://tp-statics.tokenpocket.pro/website-token/1562040672940-tp-lab.png",
- desc: "小明的账号1",
- modifier: "chendatony44",
- price: "0.1000 EOS",
- status: 3,
- title: "小明",
+ account_name: "chendachenda",
+ avatar: "https://statics.tokenpocket.pro/avatar/1562320470-chendachenda.jpg",
+ desc: "陈达的主网账号", 
+ modifier: "chendachenda", 
+ price: "0.1000 EOS",  //  last modified price
+ status: 3,   // 0:inital value 1:paid; 2:modified; 3:modified by the account self
+ title: "陈达", // nickname
  url: '{"website":"https://www.baidu.com","telegram":"tokenPocket_en","twitter":"TokenPocket_en","wechat":"TP-robot"}',
- verified: 0
+ verified: 0 // a reserved flag for future feature
 }
 ```
 
 
-### 更新个人信息
+### update account information
 
 ``` javascript
 
@@ -213,10 +196,10 @@ let actions = [{
        "permission": 'active'
    }],
    "data": {
-       "from": 'youraccount', // 当前账号
-       "memo": 'itokenpocket', // 需要编辑的账号
-       "quantity": '0.1000 EOS', // 初始价格为0.1，没增加一次
-       "to": CONTRACT_NAME  // 合约账号
+       "from": 'youraccount', // the current account,which is used to update other account's information
+       "memo": 'itokenpocket', // the account whose information will be update
+       "quantity": '0.1000 EOS', // initial price is 0.1EOS, the price will be 1.5 times on each update
+       "to": CONTRACT_NAME  // the contract account
    }
 }, {
    "account": CONTRACT_NAME,
@@ -226,11 +209,11 @@ let actions = [{
        "permission": 'active'
    }],
    "data": {
-       "account_name": 'itokenpocket', // 需要编辑的账号
-       "avatar": 'https://a.com/a.jpg', // 头像图片地址
+       "account_name": 'itokenpocket', // the account whose information will be update
+       "avatar": 'https://a.com/a.jpg', // avtar url
        "desc": '介绍信息', 
        "modifier": 'youraccount',
-       "title": 'TokenPocket官方账号',  // 名字昵称
+       "title": 'TokenPocket官方账号',  // nickname
        "url": JSON.stringify(url)
    }
 }]
