@@ -160,15 +160,19 @@ cleos get table metadatatptp metadatatptp black
 
 eos.getTableRows(true, 'account.info', 'account.info', 'accounts','','chendachenda', 'chendachenda', 1).then(console.log)
 
+当 status = 3 说明该账号的信息 是由本人编辑的
+
+When status === 3 means the information is edited by account owner.
+
 ``` javascript
 {
  account_name: "chendachenda",
  avatar: "https://statics.tokenpocket.pro/avatar/1562320470-chendachenda.jpg",
- desc: "陈达的主网账号", 
+ desc: "My EOS mainnet account", 
  modifier: "chendachenda", 
  price: "0.1000 EOS",  //  last modified price
  status: 3,   // 0:inital value 1:paid; 2:modified; 3:modified by the account self
- title: "陈达", // nickname
+ title: "Tony Chen", // nickname
  url: '{"website":"https://www.baidu.com","telegram":"tokenPocket_en","twitter":"TokenPocket_en","wechat":"TP-robot"}',
  verified: 0 // a reserved flag for future feature
 }
